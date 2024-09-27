@@ -4,9 +4,10 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 
 /**
  * This class provides the service of converting language codes to their names.
@@ -14,11 +15,13 @@ import java.util.Map;
 public class LanguageCodeConverter {
 
     // TODO Task: pick appropriate instance variables to store the data necessary for this class
-
+    private static Iterator<String> iterator;
+    private static String tab = "\t";
     /**
      * Default constructor which will load the language codes from "language-codes.txt"
      * in the resources folder.
      */
+
     public LanguageCodeConverter() {
         this("language-codes.txt");
     }
@@ -33,12 +36,12 @@ public class LanguageCodeConverter {
         try {
             List<String> lines = Files.readAllLines(Paths.get(getClass()
                     .getClassLoader().getResource(filename).toURI()));
-
+            iterator = lines.iterator();
             // TODO Task: use lines to populate the instance variable
             //           tip: you might find it convenient to create an iterator using lines.iterator()
 
-        // TODO Checkstyle: '}' on next line should be alone on a line.
-        } catch (IOException | URISyntaxException ex) {
+        }
+        catch (IOException | URISyntaxException ex) {
             throw new RuntimeException(ex);
         }
 
@@ -49,9 +52,32 @@ public class LanguageCodeConverter {
      * @param code the language code
      * @return the name of the language corresponding to the code
      */
+    // todo
     public String fromLanguageCode(String code) {
-        // TODO Task: update this code to use your instance variable to return the correct value
-        return code;
+        iterator.next();
+        while (iterator.hasNext()) {
+            String next = iterator.next();
+            String[] nextList = next.split(tab, 2);
+            if (Objects.equals(nextList[1], code)) {
+                return nextList[0];
+            }
+        }
+        return null;
+    }
+
+    /**
+     * return the list for all language with two letters.
+     * @return A list to help JSONTranslator.java
+     */
+    public List<String> getAlllanguage() {
+        List<String> result = new ArrayList<>();
+        iterator.next();
+        while (iterator.hasNext()) {
+            String next = iterator.next();
+            String[] nextList = next.split(tab, 2);
+            result.add(nextList[1]);
+        }
+        return result;
     }
 
     /**
@@ -59,17 +85,31 @@ public class LanguageCodeConverter {
      * @param language the name of the language
      * @return the 2-letter code of the language
      */
+    // todo
     public String fromLanguage(String language) {
-        // TODO Task: update this code to use your instance variable to return the correct value
-        return language;
+        iterator.next();
+        while (iterator.hasNext()) {
+            String next = iterator.next();
+            String[] nextList = next.split(tab, 2);
+            if (language.equalsIgnoreCase(nextList[0])) {
+                return nextList[1];
+            }
+        }
+        return null;
     }
 
     /**
      * Returns how many languages are included in this code converter.
      * @return how many languages are included in this code converter.
      */
+    // todo
     public int getNumLanguages() {
-        // TODO Task: update this code to use your instance variable to return the correct value
-        return 0;
+        int num = -1;
+        // as for the first line is ISO like title
+        while (iterator.hasNext()) {
+            iterator.next();
+            ++num;
+        }
+        return num;
     }
 }
